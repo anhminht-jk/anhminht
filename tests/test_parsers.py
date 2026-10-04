@@ -40,6 +40,22 @@ class BaseTest(unittest.TestCase):
         md = render_md("X", [{"time": "2025-10-04T00:00", "subject": "S", "text": "T"}])
         self.assertIn("## 2025-10-04T00:00 | S", md)
 
+    def test_collect_fans_out_projects(self):
+        import os
+        from unittest import mock
+        calls = []
+
+        def fake_call(self, app, path, params=None):
+            calls.append(path)
+            if path.endswith("project/list"):
+                return {"code": 1, "projects": [{"id": 5, "name": "Mở cửa hàng Q7"}]}
+            return {"code": 1, "tasks": [{"id": 9, "name": "Thuê mặt bằng"}]}
+
+        with mock.patch.dict(os.environ, {"BASE_WEWORK_TOKEN": "w"}, clear=True), \
+             mock.patch.object(base_vn.Base, "call", fake_call):
+            items = list(base_vn.Base().collect())
+        self.assertEqual([i["subject"] for i in items], ["Mở cửa hàng Q7", "Mở cửa hàng Q7 › Thuê mặt bằng"])
+
     def test_token_per_app(self):
         import os
         from unittest import mock

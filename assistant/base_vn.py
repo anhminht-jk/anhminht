@@ -8,9 +8,10 @@ Biến môi trường (chỉ cần quyền đọc):
   BASE_SERVICE_TOKEN  – token cho ứng dụng Base Service (luồng phê duyệt)
   BASE_ACCESS_TOKEN   – (tuỳ chọn) dùng chung khi app không có token riêng
 
-Danh sách endpoint để trong config.json (mục "base_endpoints") vì mỗi công ty
-dùng bộ module Base khác nhau; giá trị mặc định dưới đây cần đối chiếu với
-tài liệu API trong trang quản trị Base ở lần chạy thật đầu tiên.
+Endpoint Wework đã xác minh tồn tại (04/10/2026, gọi thử với token sai trả JSON):
+  extapi/v3/project/list, project/get, task/get, dept/list, user/tasks.
+Base Service: chưa tìm được endpoint (mọi đường dẫn extapi/v1..v4 đều 404) –
+khai báo trong config.json mục "base_endpoints" khi có tài liệu API.
 """
 import os
 from datetime import datetime, timezone
@@ -18,9 +19,9 @@ from datetime import datetime, timezone
 from .http import ApiError, request
 
 DEFAULT_ENDPOINTS = [
-    {"name": "Wework – dự án", "app": "wework", "path": "extapi/v3/project/list"},
-    {"name": "Wework – công việc", "app": "wework", "path": "extapi/v3/task/list"},
-    {"name": "Service – phê duyệt", "app": "service", "path": "extapi/v1/ticket/list"},
+    # Liệt kê dự án, rồi lấy chi tiết (kèm công việc) từng dự án qua project/get
+    {"name": "Wework – dự án", "app": "wework", "path": "extapi/v3/project/list",
+     "each": {"name": "Wework – công việc", "path": "extapi/v3/project/get"}},
 ]
 
 # Base trả về dữ liệu dưới các khoá khác nhau tuỳ module
@@ -34,7 +35,7 @@ def token_for(app):
 
 
 def configured():
-    return any(token_for(ep["app"]) for ep in DEFAULT_ENDPOINTS)
+    return any(k.startswith("BASE_") and k.endswith("_TOKEN") and v for k, v in os.environ.items())
 
 
 class Base:
@@ -51,20 +52,27 @@ class Base:
             raise ApiError(f"Base {app}/{path}: {r.get('message') or r}")
         return r
 
+    def rows(self, app, path, params=None, paged=True):
+        page = 0
+        while page < 50:
+            rows = extract_rows(self.call(app, path, {**(params or {}), "page": page}))
+            yield from rows
+            if not rows or not paged or len(rows) < 20:
+                return
+            page += 1
+
     def collect(self, endpoints=None):
         for ep in endpoints or DEFAULT_ENDPOINTS:
             if not token_for(ep["app"]):
                 continue
-            page = 0
-            while page < 50:
-                params = {**ep.get("params", {}), "page": page}
-                r = self.call(ep["app"], ep["path"], params)
-                rows = extract_rows(r)
-                for row in rows:
-                    yield to_item(ep["name"], row)
-                if not rows or not ep.get("paged", True) or len(rows) < 20:
-                    break
-                page += 1
+            for row in self.rows(ep["app"], ep["path"], ep.get("params"), ep.get("paged", True)):
+                yield to_item(ep["name"], row)
+                sub = ep.get("each")
+                if sub and row.get("id"):
+                    for child in self.rows(ep["app"], sub["path"], {"id": row["id"]}, paged=False):
+                        item = to_item(sub["name"], child)
+                        item["subject"] = f"{to_item('', row)['subject']} › {item['subject']}"
+                        yield item
 
 
 def extract_rows(resp):

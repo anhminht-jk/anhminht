@@ -46,7 +46,8 @@ thẳng vào việc, theo góc nhìn điều hành: dòng tiền, con người, 
 ## Cấu trúc mã
 - `assistant/lark.py`: email và nhóm chat Lark (Open API, tenant token)
 - `assistant/base_vn.py`: Base Wework (dự án, task) và Base Service (luồng phê duyệt) qua External API, token v2 riêng cho từng app.
-  Các endpoint mặc định CHƯA được xác minh: lần chạy thật đầu tiên phải kiểm tra phản hồi và sửa lại `DEFAULT_ENDPOINTS`.
+  Wework: endpoint đã xác minh tồn tại, nhưng cấu trúc dữ liệu trả về chưa thấy (chưa có token) – kiểm tra ở lần chạy thật đầu tiên.
+  Base Service: chưa có endpoint, cần tài liệu API.
 - `assistant/zalo.py`: đọc file chat Zalo xuất ra trong `data/zalo/`
 - `assistant/collect.py`: CLI gom tất cả nguồn thành `data/runs/<thời điểm>/`
 - Kiểm thử: `python3 -m unittest discover -s tests`

@@ -3,8 +3,8 @@
   "lark_skip_chats": ["Nhóm không liên quan công việc"],
   "zalo_folder": "data/zalo",
   "base_endpoints": [
-    {"name": "Wework – dự án", "app": "wework", "path": "extapi/v3/project/list"},
-    {"name": "Wework – công việc", "app": "wework", "path": "extapi/v3/task/list"},
-    {"name": "Service – phê duyệt", "app": "service", "path": "extapi/v1/ticket/list"}
+    {"name": "Wework – dự án", "app": "wework", "path": "extapi/v3/project/list",
+     "each": {"name": "Wework – công việc", "path": "extapi/v3/project/get"}},
+    {"name": "Service – phê duyệt", "app": "service", "path": "<điền khi có tài liệu API Base Service>"}
   ]
 }
