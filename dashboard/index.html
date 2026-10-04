@@ -1,0 +1,216 @@
+<title>Bàn Điều Hành</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: bản tin trong ngày bên trái (đọc), hàng đợi đề xuất bên phải (thao tác); một cột trên điện thoại */
+:root {
+  --bg: #f3f4f1; --surface: #ffffff; --ink: #1b2422; --muted: #5f6b67; --line: #dde1dc;
+  --accent: #0f5f5c; --accent-soft: #e2efed;
+  --hi: #b4372b; --mid: #b7791f; --lo: #64748b; --ok: #2f7d4a; --ok-soft: #e4f2e8;
+  --pending-soft: #fbf1df; --no-soft: #eef0f2;
+  --f-display: "Fraunces", Georgia, serif;
+  --f-body: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #121816; --surface: #1a2220; --ink: #e6ebe9; --muted: #9aa7a2; --line: #2b3633;
+  --accent: #5fbfb8; --accent-soft: #1d3432;
+  --hi: #ef7b6e; --mid: #e3a94f; --lo: #94a3b8; --ok: #6cc28a; --ok-soft: #1c3325;
+  --pending-soft: #33291a; --no-soft: #232b2a; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #121816; --surface: #1a2220; --ink: #e6ebe9; --muted: #9aa7a2; --line: #2b3633;
+  --accent: #5fbfb8; --accent-soft: #1d3432;
+  --hi: #ef7b6e; --mid: #e3a94f; --lo: #94a3b8; --ok: #6cc28a; --ok-soft: #1c3325;
+  --pending-soft: #33291a; --no-soft: #232b2a; color-scheme: dark; }
+
+body { background: var(--bg); color: var(--ink); font: 15px/1.55 var(--f-body); }
+.wrap { max-width: 1180px; margin: 0 auto; padding-inline: 16px; padding-block: 24px 48px; }
+header.top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; border-bottom: 2px solid var(--ink); padding-bottom: 12px; }
+h1 { font: 600 clamp(26px, 4vw, 34px)/1.1 var(--f-display); margin: 0; letter-spacing: -.01em; }
+.meta { font: 13px var(--f-mono); color: var(--muted); }
+.grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 32px; margin-top: 24px; }
+@media (max-width: 860px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+h2 { font: 600 12px/1 var(--f-body); text-transform: uppercase; letter-spacing: .09em; color: var(--muted); margin: 0 0 12px; }
+section { min-width: 0; }
+
+/* Bản tin */
+.headline { font: 600 20px/1.35 var(--f-display); margin: 0 0 20px; text-wrap: balance; }
+.block { margin-bottom: 24px; }
+ol.top3 { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; counter-reset: t; }
+ol.top3 li { counter-increment: t; display: grid; grid-template-columns: 28px 1fr; gap: 8px; }
+ol.top3 li::before { content: counter(t); font: 500 14px/1.55 var(--f-mono); color: var(--accent); }
+ul.plain { margin: 0; padding-left: 18px; display: grid; gap: 8px; }
+ul.risks li::marker { color: var(--hi); }
+.status-line { font: 12px var(--f-mono); color: var(--muted); border-top: 1px solid var(--line); padding-top: 10px; white-space: pre-wrap; }
+.brief-nav { display: flex; gap: 8px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+select, textarea, button { font: inherit; color: inherit; }
+select { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; font-size: 13px; }
+
+/* Hàng đợi */
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.tab { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 5px 12px; font-size: 13px; cursor: pointer; }
+.tab[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.tab .n { font-family: var(--f-mono); margin-left: 4px; opacity: .75; }
+.list { display: grid; gap: 12px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--lo); border-radius: 8px; padding: 14px 16px; display: grid; gap: 8px; min-width: 0; }
+.card.p-cao { border-left-color: var(--hi); }
+.card.p-trung { border-left-color: var(--mid); }
+.row { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+.chip { font: 500 11px/1 var(--f-body); letter-spacing: .04em; text-transform: uppercase; padding: 4px 7px; border-radius: 4px; background: var(--accent-soft); color: var(--accent); }
+.chip.st-pending { background: var(--pending-soft); color: var(--mid); }
+.chip.st-approved, .chip.st-done { background: var(--ok-soft); color: var(--ok); }
+.chip.st-rejected { background: var(--no-soft); color: var(--muted); }
+.due { font: 12px var(--f-mono); color: var(--muted); }
+.card h3 { margin: 0; font-size: 16px; font-weight: 600; line-height: 1.35; }
+.card p { margin: 0; color: var(--muted); }
+.action { background: var(--bg); border-radius: 6px; padding: 8px 10px; }
+.action b { font-weight: 600; color: var(--ink); }
+.src { font: 12px var(--f-mono); color: var(--muted); overflow-wrap: anywhere; }
+textarea { width: 100%; box-sizing: border-box; min-height: 38px; resize: vertical; border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; background: var(--surface); font-size: 14px; }
+.btns { display: flex; flex-wrap: wrap; gap: 8px; }
+.btn { border: 1px solid var(--line); background: var(--surface); padding: 7px 14px; border-radius: 6px; cursor: pointer; font-weight: 500; font-size: 14px; }
+.btn.go { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.btn:disabled { opacity: .5; cursor: default; }
+.btn:focus-visible, .tab:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.result { font-size: 14px; border-top: 1px dashed var(--line); padding-top: 8px; }
+.empty { border: 1px dashed var(--line); border-radius: 8px; padding: 20px; color: var(--muted); }
+.empty b { color: var(--ink); }
+.toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 8px 16px; border-radius: 6px; font-size: 14px; }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <h1>Bàn Điều Hành</h1>
+    <span class="meta" id="today"></span>
+  </header>
+
+  <div class="grid">
+    <section aria-labelledby="h-brief">
+      <h2 id="h-brief">Bản tin điều hành</h2>
+      <div class="brief-nav"><label class="meta" for="briefSel">Ngày</label><select id="briefSel"></select></div>
+      <div id="brief">
+        <div class="empty"><b>Chưa có bản tin.</b> Trợ lý sẽ đăng bản tin đầu tiên sau lượt đọc email Lark, Base.vn và chat. Mỗi sáng có một bản mới ở đây.</div>
+      </div>
+    </section>
+
+    <section aria-labelledby="h-queue">
+      <h2 id="h-queue">Việc chờ anh/chị quyết</h2>
+      <div class="tabs" role="group" aria-label="Lọc theo trạng thái" id="tabs"></div>
+      <div class="list" id="list">
+        <div class="empty"><b>Chưa có đề xuất nào.</b> Mỗi đề xuất ghi rõ việc trợ lý định làm và lý do. Trợ lý chỉ làm những việc anh/chị bấm <b>Duyệt</b>.</div>
+      </div>
+    </section>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const STATUS = { pending: "Chờ duyệt", approved: "Đã duyệt", done: "Đã xong", rejected: "Bỏ qua" };
+const PRIO = { cao: "Ưu tiên cao", trung: "Ưu tiên vừa", thap: "Ưu tiên thấp" };
+let db = null, canWrite = true, filter = "pending", proposals = [], briefs = [];
+
+document.getElementById("today").textContent =
+  new Date().toLocaleDateString("vi-VN", { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric" });
+
+function el(tag, attrs = {}, ...kids) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") n.className = v; else if (k.startsWith("on")) n.addEventListener(k.slice(2), v); else n.setAttribute(k, v);
+  }
+  for (const k of kids.flat()) if (k != null && k !== false) n.append(k.nodeType ? k : String(k));
+  return n;
+}
+function toast(msg) {
+  const t = document.getElementById("toast"); t.textContent = msg; t.hidden = false;
+  clearTimeout(toast._t); toast._t = setTimeout(() => (t.hidden = true), 2200);
+}
+const fmtDate = s => s ? new Date(s).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit" }) : "";
+
+/* ---------- Bản tin ---------- */
+function renderBriefSelect() {
+  const sel = document.getElementById("briefSel");
+  const cur = sel.value;
+  sel.replaceChildren(...briefs.map(b => el("option", { value: b.id }, b.id)));
+  if (briefs.some(b => b.id === cur)) sel.value = cur;
+  renderBrief();
+}
+function renderBrief() {
+  const box = document.getElementById("brief");
+  const b = briefs.find(x => x.id === document.getElementById("briefSel").value) || briefs[0];
+  if (!b) return;
+  const list = (items, cls) => el("ul", { class: "plain " + (cls || "") }, (items || []).map(i => el("li", {}, i)));
+  box.replaceChildren(
+    el("p", { class: "headline" }, b.headline || ""),
+    b.top3?.length ? el("div", { class: "block" }, el("h2", {}, "3 việc quan trọng nhất"),
+      el("ol", { class: "top3" }, b.top3.map(i => el("li", {}, i)))) : null,
+    b.risks?.length ? el("div", { class: "block" }, el("h2", {}, "Rủi ro và việc đang trễ"), list(b.risks, "risks")) : null,
+    b.insights?.length ? el("div", { class: "block" }, el("h2", {}, "Góp ý điều hành"), list(b.insights)) : null,
+    b.sources ? el("div", { class: "status-line" }, b.sources) : null,
+  );
+}
+
+/* ---------- Đề xuất ---------- */
+function renderTabs() {
+  const counts = Object.fromEntries(Object.keys(STATUS).map(s => [s, proposals.filter(p => (p.status || "pending") === s).length]));
+  document.getElementById("tabs").replaceChildren(...Object.entries(STATUS).map(([k, label]) =>
+    el("button", { class: "tab", type: "button", "aria-pressed": String(filter === k), onclick: () => { filter = k; renderAll(); } },
+      label, el("span", { class: "n" }, counts[k]))));
+}
+async function decide(p, status, noteEl, btns) {
+  if (!db) return;
+  btns.forEach(b => (b.disabled = true));
+  try {
+    await db.doc("proposals/" + p.id).update({ status, note: noteEl.value.trim(), decided_at: new Date().toISOString() });
+    toast(status === "approved" ? "Đã duyệt. Trợ lý sẽ làm ở lượt chạy kế tiếp." : "Đã bỏ qua.");
+  } catch (e) {
+    btns.forEach(b => (b.disabled = false));
+    toast(e?.code === "invalid_argument" ? "Anh/chị chỉ có quyền xem trang này." : "Chưa lưu được, thử lại sau ít phút.");
+  }
+}
+function card(p) {
+  const st = p.status || "pending";
+  const note = el("textarea", { id: "note-" + p.id, rows: "1", placeholder: "Ghi chú hoặc chỉnh hướng làm (không bắt buộc)" });
+  note.value = p.note || "";
+  const ok = el("button", { class: "btn go", type: "button" }, "Duyệt");
+  const no = el("button", { class: "btn", type: "button" }, "Bỏ qua");
+  ok.onclick = () => decide(p, "approved", note, [ok, no]);
+  no.onclick = () => decide(p, "rejected", note, [ok, no]);
+  return el("article", { class: "card p-" + (p.priority || "thap") },
+    el("div", { class: "row" },
+      el("span", { class: "chip st-" + st }, STATUS[st]),
+      p.area ? el("span", { class: "chip" }, p.area) : null,
+      el("span", { class: "due" }, PRIO[p.priority] || ""),
+      p.due ? el("span", { class: "due" }, "Hạn " + fmtDate(p.due)) : null),
+    el("h3", {}, p.title || ""),
+    p.why ? el("p", {}, p.why) : null,
+    p.action ? el("div", { class: "action" }, el("b", {}, "Trợ lý sẽ làm: "), p.action) : null,
+    p.source ? el("div", { class: "src" }, "Nguồn: " + p.source) : null,
+    st === "pending" && canWrite ? [note, el("div", { class: "btns" }, ok, no)] :
+      p.note ? el("p", {}, "Ghi chú: " + p.note) : null,
+    p.result ? el("div", { class: "result" }, el("b", {}, "Kết quả: "), p.result) : null,
+  );
+}
+function renderList() {
+  const box = document.getElementById("list");
+  const rank = { cao: 0, trung: 1, thap: 2 };
+  const rows = proposals.filter(p => (p.status || "pending") === filter)
+    .sort((a, b) => (rank[a.priority] ?? 3) - (rank[b.priority] ?? 3) || String(b.created || "").localeCompare(String(a.created || "")));
+  if (!proposals.length) return;
+  box.replaceChildren(...(rows.length ? rows.map(card) : [el("div", { class: "empty" }, "Không có mục nào ở trạng thái “" + STATUS[filter] + "”.")]));
+}
+function renderAll() { renderTabs(); renderList(); }
+
+(async () => {
+  renderTabs();
+  try { const user = await claude.use("user"); if (user) { const w = await user.can("data.write"); if (w === false) canWrite = false; } } catch {}
+  db = await claude.use("db");
+  if (!db) return;
+  db.collection("briefs").orderBy("date", "desc").limit(30).onSnapshot(s => {
+    briefs = s.docs.map(d => ({ id: d.id, ...d.data() })); renderBriefSelect();
+  }, () => {});
+  db.collection("proposals").limit(500).onSnapshot(s => {
+    proposals = s.docs.map(d => ({ id: d.id, ...d.data() })); renderAll();
+  }, () => {});
+})();
+document.getElementById("briefSel").addEventListener("change", renderBrief);
+</script>

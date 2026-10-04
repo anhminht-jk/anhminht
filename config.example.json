@@ -1,0 +1,10 @@
+{
+  "lark_mailbox": "ten@congty.com",
+  "lark_skip_chats": ["Nhóm không liên quan công việc"],
+  "zalo_folder": "data/zalo",
+  "base_endpoints": [
+    {"name": "Wework – dự án", "app": "wework", "path": "extapi/v3/project/list"},
+    {"name": "Wework – công việc", "app": "wework", "path": "extapi/v3/task/list", "params": {"status": "active"}},
+    {"name": "Request – đề xuất", "app": "request", "path": "extapi/v1/request/list"}
+  ]
+}

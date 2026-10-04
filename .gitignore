@@ -1,0 +1,6 @@
+# Dữ liệu công việc thật (email, chat, task) — KHÔNG BAO GIỜ commit
+data/
+config.json
+.env
+__pycache__/
+*.pyc
