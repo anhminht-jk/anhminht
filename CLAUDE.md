@@ -33,7 +33,7 @@ thẳng vào việc, theo góc nhìn điều hành: dòng tiền, con người, 
 3. **Cập nhật bộ nhớ** trên Notion: thêm hoặc sửa dữ kiện mới, đánh dấu việc đã đóng. Không chép nguyên email,
    chỉ ghi dữ kiện đã tóm tắt.
 4. **Phân tích**: việc tồn đọng, email chưa trả lời quá 48h, task quá hạn, đề xuất chờ duyệt lâu,
-   cam kết sắp tới hạn, tín hiệu rủi ro (dòng tiền, nhân sự nghỉ việc, khiếu nại khách hàng, khủng hoảng truyền thông),
+   cam kết sắp tới hạn, phiếu phê duyệt trên Base Service đang chờ CEO hoặc bị kẹt ở một người duyệt, tín hiệu rủi ro (dòng tiền, nhân sự nghỉ việc, khiếu nại khách hàng, khủng hoảng truyền thông),
    các mẫu lặp lại cần chuẩn hoá thành SOP.
 5. **Đăng bản tin** `briefs/<hôm nay>`: một câu tiêu đề tình hình, 3 việc quan trọng nhất,
    rủi ro, 1–3 góp ý điều hành có căn cứ (nêu nguồn). `sources` là nội dung status.md.
@@ -45,7 +45,8 @@ thẳng vào việc, theo góc nhìn điều hành: dòng tiền, con người, 
 
 ## Cấu trúc mã
 - `assistant/lark.py`: email và nhóm chat Lark (Open API, tenant token)
-- `assistant/base_vn.py`: Base.vn External API (endpoint cấu hình trong config.json)
+- `assistant/base_vn.py`: Base Wework (dự án, task) và Base Service (luồng phê duyệt) qua External API, token v2 riêng cho từng app.
+  Các endpoint mặc định CHƯA được xác minh: lần chạy thật đầu tiên phải kiểm tra phản hồi và sửa lại `DEFAULT_ENDPOINTS`.
 - `assistant/zalo.py`: đọc file chat Zalo xuất ra trong `data/zalo/`
 - `assistant/collect.py`: CLI gom tất cả nguồn thành `data/runs/<thời điểm>/`
 - Kiểm thử: `python3 -m unittest discover -s tests`

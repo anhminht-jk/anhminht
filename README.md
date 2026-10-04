@@ -1,6 +1,6 @@
 # Trợ lý điều hành
 
-Agent đọc email công ty (Lark), nhóm chat Lark, Base.vn và chat Zalo xuất ra file.
+Agent đọc email công ty (Lark), nhóm chat Lark, Base Wework, Base Service (phê duyệt) và chat Zalo xuất ra file.
 Mỗi sáng agent đăng **bản tin điều hành** kèm danh sách **đầu việc đề xuất** lên dashboard và gửi tóm tắt qua email.
 Agent chỉ triển khai những việc anh/chị đã bấm **Duyệt**.
 
@@ -24,8 +24,12 @@ Zalo file ─┘                 └─> Thực thi việc đã duyệt
 4. **Publish** app và nhờ quản trị viên Lark của công ty duyệt.
 5. Ghi lại **App ID** và **App Secret**.
 
-### 2. Lấy token Base.vn
-Vào Base Account → Tích hợp/API → tạo access token. Chỉ cần quyền đọc.
+### 2. Lấy token Base.vn (token v2, mỗi ứng dụng một token)
+Vào account.base.vn → **Tích hợp với bên thứ ba ver 2** → thêm token cho từng ứng dụng:
+- **Wework**: quyền đọc dự án, công việc
+- **Base Service**: quyền đọc các phiếu/luồng phê duyệt
+
+Đặt "thành viên phụ trách" là anh/chị, để token thấy đúng phạm vi việc anh/chị quản lý.
 
 ### 3. Khai báo vào môi trường Claude Code
 Không dán token vào khung chat. Mở menu môi trường cloud trên thanh tiêu đề phiên → **Edit**:
@@ -34,9 +38,10 @@ Không dán token vào khung chat. Mở menu môi trường cloud trên thanh ti
   LARK_APP_ID=cli_xxx
   LARK_APP_SECRET=xxx
   LARK_MAILBOX=email-cong-ty@congty.com
-  BASE_ACCESS_TOKEN=xxx
+  BASE_WEWORK_TOKEN=xxx
+  BASE_SERVICE_TOKEN=xxx
   ```
-- **Network access** → Custom → thêm `open.larksuite.com` và `*.base.vn`, giữ nguyên danh sách mặc định.
+- **Network access** → Custom → thêm `open.larksuite.com`, `wework.base.vn`, `service.base.vn`, giữ nguyên danh sách mặc định.
   Hướng dẫn: https://code.claude.com/docs/en/cloud-environments#network-access
 
 ### 4. Zalo

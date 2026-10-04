@@ -41,7 +41,7 @@ def sources(cfg, since):
         yield "Lark – Nhóm chat", chat_items
     else:
         yield "Lark", None
-    if os.environ.get("BASE_ACCESS_TOKEN"):
+    if base_vn.configured():
         yield "Base.vn", lambda: base_vn.Base().collect(cfg.get("base_endpoints"))
     else:
         yield "Base.vn", None

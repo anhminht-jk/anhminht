@@ -40,6 +40,16 @@ class BaseTest(unittest.TestCase):
         md = render_md("X", [{"time": "2025-10-04T00:00", "subject": "S", "text": "T"}])
         self.assertIn("## 2025-10-04T00:00 | S", md)
 
+    def test_token_per_app(self):
+        import os
+        from unittest import mock
+        with mock.patch.dict(os.environ, {"BASE_SERVICE_TOKEN": "s"}, clear=True):
+            self.assertEqual(base_vn.token_for("service"), "s")
+            self.assertIsNone(base_vn.token_for("wework"))
+            self.assertTrue(base_vn.configured())
+        with mock.patch.dict(os.environ, {}, clear=True):
+            self.assertFalse(base_vn.configured())
+
 
 if __name__ == "__main__":
     unittest.main()
