@@ -49,12 +49,39 @@ class BaseTest(unittest.TestCase):
             calls.append(path)
             if path.endswith("project/list"):
                 return {"code": 1, "projects": [{"id": 5, "name": "Mở cửa hàng Q7"}]}
-            return {"code": 1, "tasks": [{"id": 9, "name": "Thuê mặt bằng"}]}
+            return {"code": 1, "project": {"id": 5}, "tasks": [{"id": 9, "name": "Thuê mặt bằng"}],
+                    "subtasks": [{"id": 10, "name": "Ký HĐ"}]}
 
         with mock.patch.dict(os.environ, {"BASE_WEWORK_TOKEN": "w"}, clear=True), \
              mock.patch.object(base_vn.Base, "call", fake_call):
             items = list(base_vn.Base().collect())
-        self.assertEqual([i["subject"] for i in items], ["Mở cửa hàng Q7", "Mở cửa hàng Q7 › Thuê mặt bằng"])
+        self.assertEqual([i["subject"] for i in items], ["Mở cửa hàng Q7", "Mở cửa hàng Q7 › Thuê mặt bằng", "Mở cửa hàng Q7 › Ký HĐ"])
+        self.assertEqual(calls, ["extapi/v3/project/list", "extapi/v3/project/get.full"])
+
+    def test_wework_task_fields(self):
+        row = {"id": "1", "name": "Đặt hàng mẫu", "content": "<p>dài</p>", "content_short": "Gọi NCC",
+               "username": "lan", "deadline": "1759536000", "completed_time": 0, "overdue": 1,
+               "urgent": "0", "status": "0", "tasklist": {"id": "3", "name": "Mua hàng"},
+               "owners": [{"username": "minh"}], "last_update": "1759449600"}
+        it = base_vn.to_item("Wework", row)
+        self.assertEqual(it["time"], "2025-10-03")
+        for part in ("content_short: Gọi NCC", "username: lan", "tasklist: Mua hàng", "owners: minh",
+                     "deadline: 2025-10-04", "overdue: 1", "status: 0"):
+            self.assertIn(part, it["text"])
+        for absent in ("<p>", "completed_time", "urgent"):
+            self.assertNotIn(absent, it["text"])
+
+    def test_paging_stops_on_is_remain(self):
+        from unittest import mock
+        pages = []
+
+        def fake_call(self, app, path, params=None):
+            pages.append(params["page"])
+            return {"code": 1, "projects": [{"id": i} for i in range(25)], "is_remain": params["page"] == 0}
+
+        with mock.patch.object(base_vn.Base, "call", fake_call):
+            self.assertEqual(len(list(base_vn.Base().rows("wework", "p"))), 50)
+        self.assertEqual(pages, [0, 1])
 
     def test_token_per_app(self):
         import os
@@ -62,6 +89,8 @@ class BaseTest(unittest.TestCase):
         with mock.patch.dict(os.environ, {"BASE_SERVICE_TOKEN": "s"}, clear=True):
             self.assertEqual(base_vn.token_for("service"), "s")
             self.assertIsNone(base_vn.token_for("wework"))
+        with mock.patch.dict(os.environ, {"BASE_WEWORK_TOKEN": " <abc~1> "}, clear=True):
+            self.assertEqual(base_vn.token_for("wework"), "abc~1")
             self.assertTrue(base_vn.configured())
         with mock.patch.dict(os.environ, {}, clear=True):
             self.assertFalse(base_vn.configured())

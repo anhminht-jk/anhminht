@@ -25,7 +25,11 @@ def request(method, url, *, params=None, json_body=None, form=None, headers=None
         req = urllib.request.Request(url, data=data, method=method, headers=hdrs)
         try:
             with urllib.request.urlopen(req, timeout=30) as resp:
-                return json.loads(resp.read().decode() or "{}")
+                body = resp.read().decode()
+                try:
+                    return json.loads(body or "{}")
+                except json.JSONDecodeError:
+                    raise ApiError(f"{method} {url.split('?')[0]} -> không phải JSON: {body[:200]!r}") from None
         except urllib.error.HTTPError as e:
             body = e.read().decode(errors="replace")[:500]
             if (e.code == 429 or e.code >= 500) and attempt < retries:
