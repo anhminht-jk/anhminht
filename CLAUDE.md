@@ -30,7 +30,9 @@ thẳng vào việc, theo góc nhìn điều hành: dòng tiền, con người, 
    Nếu làm không được, giữ `approved` và ghi rõ lý do trong `result`.
 2. **Thu thập dữ liệu.** Trước tiên đồng bộ Zalo: dùng Google Drive tìm file trong thư mục
    "Trợ lý điều hành – Zalo" (id `1exueO9mvpQqZ4u5eHNSuqvymz_tO-FQU`), tải nội dung dạng text từng file vào
-   `data/zalo/<tên file>.txt` và đặt mtime bằng modifiedTime trên Drive (`touch -d <modifiedTime>`). Sau đó chạy `python3 -m assistant.collect --days N`: lần đầu N=60, các lần sau
+   `data/zalo/<tên file>.txt` và đặt mtime bằng modifiedTime trên Drive (`touch -d <modifiedTime>`). Khi đọc Zalo chỉ lấy nội dung liên quan công việc của CEO
+   (giao việc, cam kết, deadline, tiền/thanh toán, khách hàng/NCC, nhân sự, sự cố); bỏ qua chuyện cá nhân,
+   không đưa vào bản tin hay Notion. Sau đó chạy `python3 -m assistant.collect --days N`: lần đầu N=60, các lần sau
    N = số ngày từ bản tin gần nhất + 0.2. Đọc `status.md` và các file `.md` trong thư mục kết quả.
 3. **Cập nhật bộ nhớ** trên Notion: thêm hoặc sửa dữ kiện mới, đánh dấu việc đã đóng. Không chép nguyên email,
    chỉ ghi dữ kiện đã tóm tắt.
