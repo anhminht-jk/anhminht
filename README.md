@@ -46,7 +46,8 @@ Không dán token vào khung chat. Mở menu môi trường cloud trên thanh ti
 
 ### 4. Zalo
 Zalo không có API đọc chat cá nhân/nhóm. Cách làm:
-1. Trên Zalo PC, mở nhóm chat, bôi đen đoạn chat cần theo dõi → Copy.
+1. Cách nhanh nhất: chụp màn hình đoạn chat trên điện thoại, tải ảnh lên thư mục Drive, tên ảnh bắt đầu bằng tên nhóm
+   (ví dụ `BCH Phenikaa 05-10.jpg`). Hoặc copy chữ từ Zalo PC/điện thoại.
 2. Dán vào file `.txt` hoặc Google Doc trong thư mục Drive **"Trợ lý điều hành – Zalo"**,
    mỗi nhóm một file, tên file là tên nhóm (ví dụ `BCH Phenikaa`). Dán thêm vào cuối file mỗi khi có nội dung mới.
 3. Mỗi lượt chạy, agent tải các file này về `data/zalo/` (không commit), chỉ đọc file có thay đổi.
