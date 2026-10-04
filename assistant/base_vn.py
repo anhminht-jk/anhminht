@@ -12,11 +12,15 @@ Wework (đã chạy thật 04/10/2026):
   project/list      -> {"projects": [...], "page", "items_per_page", "is_remain", "total"}
   project/get       -> {"project": {...}} – KHÔNG kèm công việc
   project/get.full  -> {"project", "tasklists", "tasks", "subtasks", "milestones"}
-  dept/list         -> {"depts": [...]};  user/tasks cần tham số username.
+                       dự án dạng "team stack" theo tuần chỉ trả việc của tuần hiện tại
+  user/tasks        -> {"tasks": [...], "total"} với tham số user=<username>; gồm cả việc
+                       của dự án stack tuần và dự án không có trong project/list
+  dept/list         -> {"depts": [...]}
 Lỗi trả về dạng {"code": 0, "message": "access_token_invalid_1"}.
 Base Service: chưa tìm được endpoint (mọi đường dẫn extapi/v1..v4 đều 404) –
 khai báo trong config.json mục "base_endpoints" khi có tài liệu API.
 """
+import html
 import os
 import re
 from datetime import datetime, timezone
@@ -24,10 +28,12 @@ from datetime import datetime, timezone
 from .http import ApiError, request
 
 DEFAULT_ENDPOINTS = [
-    # Liệt kê dự án, rồi lấy công việc + việc con từng dự án qua project/get.full
+    # Liệt kê dự án, lấy công việc + việc con từng dự án qua project/get.full,
+    # rồi bổ sung việc theo từng thành viên dự án qua user/tasks (bỏ trùng theo id)
     {"name": "Wework – dự án", "app": "wework", "path": "extapi/v3/project/list",
      "each": {"name": "Wework – công việc", "path": "extapi/v3/project/get.full",
-              "keys": ["tasks", "subtasks"]}},
+              "keys": ["tasks", "subtasks"]},
+     "per_user": {"name": "Wework – công việc", "path": "extapi/v3/user/tasks"}},
 ]
 
 # Base trả về dữ liệu dưới các khoá khác nhau tuỳ module
@@ -81,15 +87,33 @@ class Base:
         for ep in endpoints or DEFAULT_ENDPOINTS:
             if not token_for(ep["app"]):
                 continue
+            parents, users, seen = {}, set(), set()
+
+            def child_item(name, child, parent=None):
+                item = to_item(name, child)
+                prefix = parent or parents.get(str(child.get("project_id"))) or (child.get("ns") or {}).get("name")
+                if prefix:
+                    item["subject"] = f"{prefix} › {item['subject']}"
+                return item
+
             for row in self.rows(ep["app"], ep["path"], ep.get("params"), ep.get("paged", True)):
-                yield to_item(ep["name"], row)
+                item = to_item(ep["name"], row)
+                parents[str(row.get("id"))] = item["subject"]
+                users.update(u.get("username") for u in (row.get("owners") or []) + (row.get("followers") or [])
+                             if isinstance(u, dict) and u.get("username"))
+                yield item
                 sub = ep.get("each")
                 if sub and row.get("id"):
                     for child in self.rows(ep["app"], sub["path"], {"id": row["id"]}, paged=False,
                                            keys=sub.get("keys")):
-                        item = to_item(sub["name"], child)
-                        item["subject"] = f"{to_item('', row)['subject']} › {item['subject']}"
-                        yield item
+                        seen.add(str(child.get("id")))
+                        yield child_item(sub["name"], child, item["subject"])
+            per = ep.get("per_user")
+            for u in sorted(users) if per else ():
+                for child in self.rows(ep["app"], per["path"], {"user": u}, keys=["tasks"]):
+                    if str(child.get("id")) not in seen:
+                        seen.add(str(child.get("id")))
+                        yield child_item(per["name"], child)
 
 
 def extract_rows(resp):
@@ -114,14 +138,15 @@ def _fmt(v):
                          for x in v)
     if isinstance(v, dict):  # tasklist {"name"}, stats {"total", "overdue"...}
         return v.get("name") or ", ".join(f"{k}={x}" for k, x in v.items() if not isinstance(x, (dict, list)))
-    if isinstance(v, str) and "<" in v:
-        return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", v)).strip()
+    if isinstance(v, str):
+        return html.unescape(re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", v))).strip()
     return v
 
 
 def to_item(module, row):
     fields = {k: _fmt(row[k]) for k in _TEXT_FIELDS
               if row.get(k) not in (None, "", [], {}) and (k in ("status", "stage") or row[k] not in _ZERO)}
+    fields = {k: v for k, v in fields.items() if v not in ("", None)}
     if "content_short" in fields:
         fields.pop("content", None)
     return {

@@ -48,15 +48,23 @@ class BaseTest(unittest.TestCase):
         def fake_call(self, app, path, params=None):
             calls.append(path)
             if path.endswith("project/list"):
-                return {"code": 1, "projects": [{"id": 5, "name": "Mở cửa hàng Q7"}]}
+                return {"code": 1, "projects": [{"id": 5, "name": "Mở cửa hàng Q7", "owners": [{"username": "an"}]}]}
+            if path.endswith("user/tasks"):
+                self.users.append(params["user"])
+                return {"code": 1, "tasks": [{"id": 9, "name": "Thuê mặt bằng", "project_id": "5"},
+                                             {"id": 11, "name": "Nộp báo cáo tuần", "ns": {"name": "HCNS"}}]}
             return {"code": 1, "project": {"id": 5}, "tasks": [{"id": 9, "name": "Thuê mặt bằng"}],
                     "subtasks": [{"id": 10, "name": "Ký HĐ"}]}
 
         with mock.patch.dict(os.environ, {"BASE_WEWORK_TOKEN": "w"}, clear=True), \
-             mock.patch.object(base_vn.Base, "call", fake_call):
+             mock.patch.object(base_vn.Base, "call", fake_call), \
+             mock.patch.object(base_vn.Base, "users", [], create=True):
             items = list(base_vn.Base().collect())
-        self.assertEqual([i["subject"] for i in items], ["Mở cửa hàng Q7", "Mở cửa hàng Q7 › Thuê mặt bằng", "Mở cửa hàng Q7 › Ký HĐ"])
-        self.assertEqual(calls, ["extapi/v3/project/list", "extapi/v3/project/get.full"])
+            self.assertEqual(base_vn.Base.users, ["an"])
+        self.assertEqual([i["subject"] for i in items],
+                         ["Mở cửa hàng Q7", "Mở cửa hàng Q7 › Thuê mặt bằng", "Mở cửa hàng Q7 › Ký HĐ",
+                          "HCNS › Nộp báo cáo tuần"])
+        self.assertEqual(calls, ["extapi/v3/project/list", "extapi/v3/project/get.full", "extapi/v3/user/tasks"])
 
     def test_wework_task_fields(self):
         row = {"id": "1", "name": "Đặt hàng mẫu", "content": "<p>dài</p>", "content_short": "Gọi NCC",
@@ -68,6 +76,8 @@ class BaseTest(unittest.TestCase):
         for part in ("content_short: Gọi NCC", "username: lan", "tasklist: Mua hàng", "owners: minh",
                      "deadline: 2025-10-04", "overdue: 1", "status: 0"):
             self.assertIn(part, it["text"])
+        self.assertEqual(base_vn.to_item("W", {"content": "<p></p>", "name": "a&amp;b"})["subject"], "a&b")
+        self.assertNotIn("content", base_vn.to_item("W", {"content": "<p></p>"})["text"])
         for absent in ("<p>", "completed_time", "urgent"):
             self.assertNotIn(absent, it["text"])
 
