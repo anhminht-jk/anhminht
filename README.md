@@ -50,6 +50,8 @@ Zalo không có API đọc chat cá nhân/nhóm. Cách làm:
    (ví dụ `BCH Phenikaa 05-10.jpg`). Hoặc copy chữ từ Zalo PC/điện thoại.
 2. Dán vào file `.txt` hoặc Google Doc trong thư mục Drive **"Trợ lý điều hành – Zalo"**,
    mỗi nhóm một file, tên file là tên nhóm (ví dụ `BCH Phenikaa`). Dán thêm vào cuối file mỗi khi có nội dung mới.
+   Copy cả nhóm một lần: dùng nút dấu trang `tools/zalo_bookmarklet.min.txt` trên chat.zalo.me
+   (tạo dấu trang mới trong Chrome, dán nội dung file vào ô URL). Mở nhóm, bấm nút → tự cuộn lấy tin cũ → Sao chép.
 3. Mỗi lượt chạy, agent tải các file này về `data/zalo/` (không commit), chỉ đọc file có thay đổi.
 
 ## Chạy thử
