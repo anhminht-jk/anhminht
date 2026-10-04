@@ -45,8 +45,11 @@ Không dán token vào khung chat. Mở menu môi trường cloud trên thanh ti
   Hướng dẫn: https://code.claude.com/docs/en/cloud-environments#network-access
 
 ### 4. Zalo
-Zalo không có API đọc chat cá nhân. Chép các đoạn chat quan trọng vào file `.txt`
-trong `data/zalo/`, mỗi nhóm một file, tên file là tên nhóm.
+Zalo không có API đọc chat cá nhân/nhóm. Cách làm:
+1. Trên Zalo PC, mở nhóm chat, bôi đen đoạn chat cần theo dõi → Copy.
+2. Dán vào file `.txt` hoặc Google Doc trong thư mục Drive **"Trợ lý điều hành – Zalo"**,
+   mỗi nhóm một file, tên file là tên nhóm (ví dụ `BCH Phenikaa`). Dán thêm vào cuối file mỗi khi có nội dung mới.
+3. Mỗi lượt chạy, agent tải các file này về `data/zalo/` (không commit), chỉ đọc file có thay đổi.
 
 ## Chạy thử
 ```bash

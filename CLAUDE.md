@@ -28,7 +28,9 @@ thẳng vào việc, theo góc nhìn điều hành: dòng tiền, con người, 
    thực hiện đúng `action` và `note`, rồi cập nhật `status: done` và ghi `result` (đã làm gì, link/nháp).
    Nếu chưa đủ quyền ghi vào Lark/Base thì đặt nội dung nháp hoàn chỉnh vào `result` để CEO copy.
    Nếu làm không được, giữ `approved` và ghi rõ lý do trong `result`.
-2. **Thu thập dữ liệu.** Chạy `python3 -m assistant.collect --days N`: lần đầu N=60, các lần sau
+2. **Thu thập dữ liệu.** Trước tiên đồng bộ Zalo: dùng Google Drive tìm file trong thư mục
+   "Trợ lý điều hành – Zalo" (id `1exueO9mvpQqZ4u5eHNSuqvymz_tO-FQU`), tải nội dung dạng text từng file vào
+   `data/zalo/<tên file>.txt` và đặt mtime bằng modifiedTime trên Drive (`touch -d <modifiedTime>`). Sau đó chạy `python3 -m assistant.collect --days N`: lần đầu N=60, các lần sau
    N = số ngày từ bản tin gần nhất + 0.2. Đọc `status.md` và các file `.md` trong thư mục kết quả.
 3. **Cập nhật bộ nhớ** trên Notion: thêm hoặc sửa dữ kiện mới, đánh dấu việc đã đóng. Không chép nguyên email,
    chỉ ghi dữ kiện đã tóm tắt.
@@ -48,6 +50,6 @@ thẳng vào việc, theo góc nhìn điều hành: dòng tiền, con người, 
 - `assistant/base_vn.py`: Base Wework (dự án, task) và Base Service (luồng phê duyệt) qua External API, token v2 riêng cho từng app.
   Wework: endpoint đã xác minh tồn tại, nhưng cấu trúc dữ liệu trả về chưa thấy (chưa có token) – kiểm tra ở lần chạy thật đầu tiên.
   Base Service: chưa có endpoint, cần tài liệu API.
-- `assistant/zalo.py`: đọc file chat Zalo xuất ra trong `data/zalo/`
+- `assistant/zalo.py`: đọc file chat Zalo trong `data/zalo/` (đồng bộ từ Drive), chỉ file có mtime trong khoảng --days
 - `assistant/collect.py`: CLI gom tất cả nguồn thành `data/runs/<thời điểm>/`
 - Kiểm thử: `python3 -m unittest discover -s tests`

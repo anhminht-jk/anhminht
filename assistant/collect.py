@@ -45,7 +45,7 @@ def sources(cfg, since):
         yield "Base.vn", lambda: base_vn.Base().collect(cfg.get("base_endpoints"))
     else:
         yield "Base.vn", None
-    yield "Zalo (file xuất)", lambda: zalo.collect(cfg.get("zalo_folder", "data/zalo"))
+    yield "Zalo (file xuất)", lambda: zalo.collect(cfg.get("zalo_folder", "data/zalo"), since)
 
 
 def render_md(title, items):

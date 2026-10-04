@@ -108,3 +108,21 @@ class BaseTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ZaloTest(unittest.TestCase):
+    def test_only_files_changed_since(self):
+        import os
+        import tempfile
+        from datetime import datetime, timedelta, timezone
+        from assistant import zalo
+        with tempfile.TemporaryDirectory() as d:
+            for name in ("Nhom A", "Nhom B"):
+                with open(os.path.join(d, name + ".txt"), "w", encoding="utf-8") as f:
+                    f.write("An 09:00\nGửi báo giá trước 10h\n")
+            old = (datetime.now(timezone.utc) - timedelta(days=3)).timestamp()
+            os.utime(os.path.join(d, "Nhom B.txt"), (old, old))
+            since = datetime.now(timezone.utc) - timedelta(days=1)
+            items = list(zalo.collect(d, since))
+            self.assertEqual([i["chat"] for i in items], ["Nhom A"])
+            self.assertEqual(len(list(zalo.collect(d))), 2)
