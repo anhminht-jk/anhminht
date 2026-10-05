@@ -79,7 +79,7 @@
     const nr = document.createElement('label');
     nr.textContent = 'Tên nhóm: ';
     const inp = document.createElement('input');
-    inp.value = label; inp.style.cssText = 'width:60%;padding:4px 8px;font:14px sans-serif;border:1px solid #0068ff;border-radius:4px';
+    inp.value = label; inp.style.cssText = 'width:40vw;padding:4px 8px;font:14px sans-serif;border:1px solid #0068ff;border-radius:4px';
     nr.append(inp);
     const t = document.createElement('textarea');
     const txt = () => `\n===== ${inp.value.trim()} | lấy lúc ${stamp} | ${note} =====\n${out.join('\n')}\n`;
