@@ -61,6 +61,9 @@ thẳng vào việc, theo góc nhìn điều hành: dòng tiền, con người, 
   Wework: endpoint đã xác minh tồn tại, nhưng cấu trúc dữ liệu trả về chưa thấy (chưa có token) – kiểm tra ở lần chạy thật đầu tiên.
   Base Service: đã chạy (06/10/2026) qua extapi/v1 service/get.all + ticket/get.all, token gửi bằng `access_token_v2`.
   Mỗi phiếu được tóm tắt: bước hiện tại, người phụ trách, hạn, tình trạng (QUÁ HẠN / SẮP ĐẾN HẠN / không đặt hạn / HOÀN THÀNH).
+  Lưu ý (CEO 06/10/2026): luồng phê duyệt Base Service đang thử nghiệm và xây dựng. Chỉ báo tình trạng cấu hình/quy trình,
+  không coi phiếu là việc thật và không tạo đề xuất nhắc người duyệt cho đến khi CEO báo đã dùng chính thức.
+  Base Wework là hệ thống công việc chính: CEO đã yêu cầu toàn bộ anh em làm việc trên đó.
 - `assistant/zalo.py`: đọc file chat Zalo trong `data/zalo/` (đồng bộ từ Drive), chỉ file có mtime trong khoảng --days
 - `assistant/collect.py`: CLI gom tất cả nguồn thành `data/runs/<thời điểm>/`
 - Kiểm thử: `python3 -m unittest discover -s tests`
