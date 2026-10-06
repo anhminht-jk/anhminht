@@ -45,11 +45,11 @@ thẳng vào việc, theo góc nhìn điều hành: dòng tiền, con người, 
    rủi ro, 1–3 góp ý điều hành có căn cứ (nêu nguồn). `sources` là nội dung status.md.
 6. **Tạo đề xuất mới** (tối đa 7 mục mỗi ngày, ưu tiên chất lượng): mỗi mục có lý do, nguồn,
    và **việc trợ lý sẽ làm** cụ thể đến mức duyệt xong là làm được ngay. Không lặp lại mục đang pending.
-   Mỗi lượt có thêm 1 đề xuất cố định (không tính vào giới hạn 7): **"Đồng bộ bản tin sang bộ nhớ GPT"**
-   (area Vận hành, priority thap), action: tạo Google Doc `02_SYNC_CLAUDE_<ngày>_tro-ly-dieu-hanh` trong thư mục
-   Drive 00_AI_MEMORY_VIET_DUC_AFG (id `1JT8qwFyrFTrYwC1Yxek_A2F7qiaqSr5f`) theo mẫu bàn giao trong `00_READ_FIRST`
-   (trạng thái CHƯA GỘP, nhận định ghi DỰ THẢO, không chứa dữ liệu nhạy cảm), nội dung là tóm tắt bản tin và dữ kiện mới.
-   Nếu đã có đề xuất đồng bộ đang pending thì cập nhật ngày/nội dung của mục đó thay vì tạo mục mới.
+      Đồng bộ sang bộ nhớ GPT: CEO cho phép sẵn (06/10/2026), không cần đề xuất. Cuối mỗi lượt, tự tạo Google Doc
+   `02_SYNC_CLAUDE_<ngày>_tro-ly-dieu-hanh` trong thư mục Drive 00_AI_MEMORY_VIET_DUC_AFG
+   (id `1JT8qwFyrFTrYwC1Yxek_A2F7qiaqSr5f`) theo mẫu bàn giao trong `00_READ_FIRST` (trạng thái CHƯA GỘP,
+   nhận định ghi DỰ THẢO, không chứa dữ liệu nhạy cảm), nội dung là tóm tắt bản tin và dữ kiện mới.
+   Chỉ tạo file mới, không sửa hay xoá file khác trong thư mục.
 7. **Gửi email bản tin** qua Gmail tới anhminht@gmail.com, tiêu đề `[Bản tin điều hành] dd/mm`, gồm phần tóm tắt
    và số việc chờ duyệt, kèm link dashboard. Đây là việc đã được CEO cho phép sẵn.
 8. Xoá các tài liệu mẫu có id bắt đầu bằng `vi-du` khi đã có bản tin thật.
