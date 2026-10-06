@@ -105,6 +105,59 @@ class BaseTest(unittest.TestCase):
         with mock.patch.dict(os.environ, {}, clear=True):
             self.assertFalse(base_vn.configured())
 
+    def test_service_ticket_summary(self):
+        import base64 as b64
+        import json as js
+        from datetime import datetime, timezone
+        now = datetime(2026, 1, 10, 0, 0, tzinfo=timezone.utc)
+        h = lambda hours: str(int(now.timestamp()) + hours * 3600)
+        proj = b64.b64encode(js.dumps({"title": "Dự án A"}).encode()).decode().rstrip("=")
+        form = [{"name": "Phân loại đề xuất", "type": "select", "value": "Nóng"},
+                {"name": "Dự án", "type": "select-master", "value": proj},
+                {"name": "Số tiền đề nghị", "type": "currency", "value": "2000000"}]
+        tickets = [
+            {"id": "1", "root_id": "0", "name": "Phiếu sắp hạn", "username": "an", "since": h(-48), "form": form},
+            {"id": "11", "root_id": "1", "status": "10", "block_metatype": "custom", "name": "Đề nghị"},
+            {"id": "12", "root_id": "1", "status": "0", "block_metatype": "approval", "name": "CHT duyệt",
+             "assignees": [{"username": "binh"}], "deadline": h(5)},
+            {"id": "2", "root_id": "0", "name": "Phiếu quá hạn", "username": "an", "form": []},
+            {"id": "21", "root_id": "2", "status": "0", "name": "KT duyệt", "assignees": [{"username": "chi"}],
+             "deadline": h(-1)},
+            {"id": "3", "root_id": "0", "name": "Phiếu treo", "username": "an"},
+            {"id": "31", "root_id": "3", "status": "0", "name": "Đề nghị thanh toán", "deadline": "0",
+             "assignees": [{"username": "an", "signed": 3}]},
+            {"id": "4", "root_id": "0", "name": "Phiếu xong", "username": "an"},
+            {"id": "41", "root_id": "4", "status": "9", "block_metatype": "end_service", "name": "Hoàn thành"},
+        ]
+        items = {i["id"]: i for i in base_vn.ticket_items("Base Service", "QT thanh toán", tickets, now)}
+        self.assertEqual(sorted(items), ["1", "2", "3", "4"])
+        t1 = items["1"]["text"]
+        for part in ("dự án: Dự án A", "phân loại đề xuất: Nóng", "số tiền đề nghị: 2000000",
+                     "bước hiện tại: CHT duyệt", "người phụ trách: binh", "SẮP ĐẾN HẠN"):
+            self.assertIn(part, t1)
+        self.assertEqual(items["1"]["subject"], "QT thanh toán › Phiếu sắp hạn")
+        self.assertIn("QUÁ HẠN", items["2"]["text"])
+        self.assertIn("không đặt hạn", items["3"]["text"])
+        self.assertIn("HOÀN THÀNH", items["4"]["text"])
+
+    def test_collect_service_endpoint(self):
+        import os
+        from unittest import mock
+
+        def fake_call(self, app, path, params=None):
+            self.calls.append((app, path, (params or {}).get("service_id")))
+            if path.endswith("service/get.all"):
+                return {"code": 1, "services": [{"id": "7", "name": "QT A"}]}
+            return {"code": 1, "tickets": [{"id": "1", "root_id": "0", "name": "P1"}]}
+
+        with mock.patch.dict(os.environ, {"BASE_SERVICE_TOKEN": "s"}, clear=True), \
+             mock.patch.object(base_vn.Base, "call", fake_call), \
+             mock.patch.object(base_vn.Base, "calls", [], create=True):
+            items = list(base_vn.Base().collect())
+            self.assertEqual(base_vn.Base.calls, [("service", "extapi/v1/service/get.all", None),
+                                                  ("service", "extapi/v1/ticket/get.all", "7")])
+        self.assertEqual([i["subject"] for i in items], ["QT A › P1"])
+
 
 if __name__ == "__main__":
     unittest.main()

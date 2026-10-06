@@ -51,14 +51,16 @@ thẳng vào việc, theo góc nhìn điều hành: dòng tiền, con người, 
    nhận định ghi DỰ THẢO, không chứa dữ liệu nhạy cảm), nội dung là tóm tắt bản tin và dữ kiện mới.
    Chỉ tạo file mới, không sửa hay xoá file khác trong thư mục.
 7. **Gửi email bản tin** qua Gmail tới anhminht@gmail.com, tiêu đề `[Bản tin điều hành] dd/mm`, gồm phần tóm tắt
-   và số việc chờ duyệt, kèm link dashboard. Đây là việc đã được CEO cho phép sẵn.
+   và số việc chờ duyệt, danh sách việc trợ lý đã làm trong lượt (đề xuất chuyển `done`), tình trạng phiếu
+   Base Service quá hạn/sắp đến hạn, kèm link dashboard. Đây là việc đã được CEO cho phép sẵn.
 8. Xoá các tài liệu mẫu có id bắt đầu bằng `vi-du` khi đã có bản tin thật.
 
 ## Cấu trúc mã
 - `assistant/lark.py`: email và nhóm chat Lark (Open API, tenant token)
 - `assistant/base_vn.py`: Base Wework (dự án, task) và Base Service (luồng phê duyệt) qua External API, token v2 riêng cho từng app.
   Wework: endpoint đã xác minh tồn tại, nhưng cấu trúc dữ liệu trả về chưa thấy (chưa có token) – kiểm tra ở lần chạy thật đầu tiên.
-  Base Service: chưa có endpoint, cần tài liệu API.
+  Base Service: đã chạy (06/10/2026) qua extapi/v1 service/get.all + ticket/get.all, token gửi bằng `access_token_v2`.
+  Mỗi phiếu được tóm tắt: bước hiện tại, người phụ trách, hạn, tình trạng (QUÁ HẠN / SẮP ĐẾN HẠN / không đặt hạn / HOÀN THÀNH).
 - `assistant/zalo.py`: đọc file chat Zalo trong `data/zalo/` (đồng bộ từ Drive), chỉ file có mtime trong khoảng --days
 - `assistant/collect.py`: CLI gom tất cả nguồn thành `data/runs/<thời điểm>/`
 - Kiểm thử: `python3 -m unittest discover -s tests`
