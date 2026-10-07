@@ -72,7 +72,9 @@ textarea { width: 100%; box-sizing: border-box; min-height: 38px; resize: vertic
 .btn.go { background: var(--accent); border-color: var(--accent); color: var(--surface); }
 .btn:disabled { opacity: .5; cursor: default; }
 .btn:focus-visible, .tab:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.result { font-size: 14px; border-top: 1px dashed var(--line); padding-top: 8px; }
+.result { font-size: 14px; border-top: 1px dashed var(--line); padding-top: 8px; display: grid; gap: 8px; }
+.result .txt { white-space: pre-wrap; overflow-wrap: anywhere; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; line-height: 1.55; max-height: 420px; overflow: auto; }
+.result .head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .empty { border: 1px dashed var(--line); border-radius: 8px; padding: 20px; color: var(--muted); }
 .empty b { color: var(--ink); }
 .toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 8px 16px; border-radius: 6px; font-size: 14px; }
@@ -167,6 +169,16 @@ async function decide(p, status, noteEl, btns) {
     toast(e?.code === "invalid_argument" ? "Anh/chị chỉ có quyền xem trang này." : "Chưa lưu được, thử lại sau ít phút.");
   }
 }
+function resultBox(text) {
+  const copy = el("button", { class: "btn", type: "button" }, "Sao chép");
+  copy.onclick = async () => {
+    try { await navigator.clipboard.writeText(text); toast("Đã sao chép kết quả."); }
+    catch { toast("Trình duyệt chặn sao chép — bôi đen nội dung để copy."); }
+  };
+  return el("div", { class: "result" },
+    el("div", { class: "head" }, el("b", {}, "Kết quả"), copy),
+    el("div", { class: "txt" }, text));
+}
 function card(p) {
   const st = p.status || "pending";
   const note = el("textarea", { id: "note-" + p.id, rows: "1", placeholder: "Ghi chú hoặc chỉnh hướng làm (không bắt buộc)" });
@@ -187,7 +199,7 @@ function card(p) {
     p.source ? el("div", { class: "src" }, "Nguồn: " + p.source) : null,
     st === "pending" && canWrite ? [note, el("div", { class: "btns" }, ok, no)] :
       p.note ? el("p", {}, "Ghi chú: " + p.note) : null,
-    p.result ? el("div", { class: "result" }, el("b", {}, "Kết quả: "), p.result) : null,
+    p.result ? resultBox(p.result) : null,
   );
 }
 function renderList() {
