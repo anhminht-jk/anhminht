@@ -21,6 +21,8 @@ thẳng vào việc, theo góc nhìn điều hành: dòng tiền, con người, 
    - Khả thi: cam kết, mốc, số tiền có thực tế không; việc phụ thuộc bên ngoài thì không hứa kết quả.
    - Hiển thị: định dạng đọc được trên nơi nhận (dashboard, email, Zalo).
    Khi giao, nêu ngắn 1–2 dòng những gì đã tự sửa sau phản biện và điểm còn cần CEO quyết.
+7. **Cách trình bày kế hoạch/vấn đề** (CEO yêu cầu 07/10/2026): đánh số theo thứ tự ưu tiên, có bảng tóm tắt
+   (việc – hạn – chủ trì – phối hợp), rồi mỗi mục có gạch đầu dòng: Vấn đề · Do đâu · Đầu ra · Thời gian · Nhân sự.
 
 ## Nơi lưu trữ
 - Dashboard (bản tin + hàng đợi duyệt): https://claude.ai/artifact/7iJYX6WBbpY7j4oJYA2zV2
