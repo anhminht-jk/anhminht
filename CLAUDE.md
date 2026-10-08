@@ -40,6 +40,10 @@ thẳng vào việc, theo góc nhìn điều hành: dòng tiền, con người, 
 - Gửi sớm: làm bước 5 (đăng bản tin) rồi gửi email (bước 7) NGAY sau đó; Notion, file đồng bộ GPT làm sau email.
 - Giới hạn thời gian: nếu đã quá 08:05 giờ VN mà chưa gửi, dừng phân tích sâu, gửi ngay bản tin với những gì đã có.
 - Nếu không gửi được (lỗi quyền, lỗi Gmail), ghi rõ lý do trong dashboard và thử lại một lần.
+- GPT đọc Zalo, email Lark, Wework trên máy nhà CEO khoảng 01:00 sáng (CEO chốt 08/10/2026, lúc đó CEO còn thức, máy chắc chắn bật).
+  Mỗi sáng kiểm tra đủ 3 nguồn (Zalo trong thư mục Zalo; `02_SYNC_GPT_EMAIL_*`, `02_SYNC_GPT_WEWORK_*` trong 00_AI_MEMORY) có file
+  sửa sau bản tin trước. Thiếu nguồn nào thì dòng đầu email ghi "⚠️ Đêm qua GPT KHÔNG chạy <nguồn> – kiểm tra máy nhà/Zalo Web";
+  thiếu cùng nguồn 2 ngày liên tiếp thì tạo đề xuất để CEO xử lý.
 
 ## Các bước mỗi lượt
 1. **Thực thi việc đã duyệt.** Dùng ArtifactData query `proposals` lọc `status == approved`. Với từng mục:
