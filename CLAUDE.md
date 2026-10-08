@@ -34,6 +34,13 @@ thẳng vào việc, theo góc nhìn điều hành: dòng tiền, con người, 
   (tạo nếu chưa có), gồm các mục: Dự án & mục tiêu · Con người (vai trò, phong cách, độ tin cậy) ·
   Đối tác/khách hàng/NCC · Cam kết & deadline · Vấn đề đang mở · Quyết định đã đưa ra · Sở thích làm việc của CEO.
 
+## Email bản tin hằng ngày là bắt buộc (CEO yêu cầu 08/10/2026)
+- Mỗi lượt sáng PHẢI gửi email bản tin, kể cả khi thiếu dữ liệu từ GPT (Zalo, email, Wework) hay Base lỗi:
+  gửi với dữ liệu đang có và ghi rõ nguồn nào thiếu. Không chờ, không bỏ.
+- Gửi sớm: làm bước 5 (đăng bản tin) rồi gửi email (bước 7) NGAY sau đó; Notion, file đồng bộ GPT làm sau email.
+- Giới hạn thời gian: nếu đã quá 08:05 giờ VN mà chưa gửi, dừng phân tích sâu, gửi ngay bản tin với những gì đã có.
+- Nếu không gửi được (lỗi quyền, lỗi Gmail), ghi rõ lý do trong dashboard và thử lại một lần.
+
 ## Các bước mỗi lượt
 1. **Thực thi việc đã duyệt.** Dùng ArtifactData query `proposals` lọc `status == approved`. Với từng mục:
    thực hiện đúng `action` và `note`, rồi cập nhật `status: done` và ghi `result` (đã làm gì, link/nháp).
